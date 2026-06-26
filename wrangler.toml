@@ -1,3 +1,7 @@
 name = "calculate-shopee-affiliate"
 compatibility_date = "2024-03-29"
 pages_build_output_dir = "public"
+
+[[kv_namespaces]]
+binding = "HISTORY_KV"
+id = "a02ddc1971ed4b01a68fcbd87571d1ca"
