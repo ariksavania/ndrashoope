@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopee Affiliate Komisi Calculator</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="background-effects">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+        <div class="glow-orb orb-3"></div>
+    </div>
+    
+    <div class="container glass-panel">
+        <header>
+            <h1 class="gradient-text">Shopee Affiliate Calculator</h1>
+            <p class="subtitle">Hitung Komisi dengan Megah & Mewah</p>
+            
+            <div class="author-badge">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 16 16" class="author-icon">
+                    <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1H3Zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z"/>
+                </svg>
+                <span>AUTHOR INDRALANA</span>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-target="single">Hitung Single</button>
+            <button class="tab-btn" data-target="massal">Hitung Massal</button>
+            <button class="tab-btn" data-target="history">Riwayat Komisi</button>
+        </nav>
+
+        <main>
+            <!-- Mode Single -->
+            <section id="single" class="tab-content active">
+                <div class="input-group">
+                    <label for="harga-single">Harga Produk (Rp)</label>
+                    <input type="number" id="harga-single" placeholder="Masukkan harga produk..." step="any">
+                </div>
+                <div class="input-group">
+                    <label for="persen-single">Persentase Komisi (%)</label>
+                    <input type="number" id="persen-single" placeholder="Contoh: 10" step="any">
+                </div>
+                <button id="btn-hitung-single" class="btn-primary">Hitung Komisi</button>
+                
+                <div id="result-single" class="result-card hidden">
+                    <h3>Hasil Perhitungan</h3>
+                    <div class="result-details">
+                        <div class="detail-row"><span>Harga Produk:</span> <span id="res-harga-single"></span></div>
+                        <div class="detail-row"><span>Persentase:</span> <span id="res-persen-single"></span></div>
+                        <div class="detail-row highlight"><span>Komisi Dapat:</span> <span id="res-komisi-single" class="cyan-text"></span></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mode Massal -->
+            <section id="massal" class="tab-content">
+                <div class="input-group">
+                    <label for="jumlah-massal">Jumlah Produk</label>
+                    <input type="number" id="jumlah-massal" placeholder="Berapa produk?" min="1">
+                </div>
+                <button id="btn-set-massal" class="btn-primary">Mulai Input</button>
+
+                <div id="massal-inputs" class="hidden">
+                    <h3 class="gradient-text-small mt-4">Masukkan Data Produk</h3>
+                    <div id="massal-container"></div>
+                    <button id="btn-hitung-massal" class="btn-primary mt-4">Hitung Semua Komisi</button>
+                </div>
+
+                <div id="result-massal" class="result-card hidden">
+                    <h3>Total Komisi Keseluruhan</h3>
+                    <h2 id="res-total-massal" class="gradient-text"></h2>
+                    <div id="massal-details-list" class="mt-4"></div>
+                </div>
+            </section>
+
+            <!-- Riwayat -->
+            <section id="history" class="tab-content">
+                <div class="history-controls">
+                    <button id="btn-refresh-history" class="btn-secondary">Refresh Data</button>
+                </div>
+                <div class="history-viewer">
+                    <pre id="history-content">Memuat data...</pre>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        Berhasil disimpan!
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

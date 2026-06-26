@@ -1,0 +1,17 @@
+{
+  "name": "calculate-shopee-affiliate-main",
+  "version": "1.0.0",
+  "description": "![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python) ![License](https://img.shields.io/badge/License-Free-green) ![Platform](https://img.shields.io/badge/Platform-Termux%20|%20CMD-orange) ![Made by](https://img.shields.io/badge/Author-Masjjoooo-purple)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}

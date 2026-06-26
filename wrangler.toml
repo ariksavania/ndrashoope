@@ -1,0 +1,7 @@
+name = "calculate-shopee-affiliate"
+compatibility_date = "2024-03-29"
+pages_build_output_dir = "public"
+
+[[kv_namespaces]]
+binding = "HISTORY_KV"
+id = "mock-id-for-local-dev"
