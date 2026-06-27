@@ -1,5 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
     
+    // Main App Navigation Logic
+    const mainNavBtns = document.querySelectorAll('.main-nav-btn');
+    const appSections = document.querySelectorAll('.app-section');
+
+    mainNavBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            mainNavBtns.forEach(b => b.classList.remove('active'));
+            appSections.forEach(s => s.classList.remove('active'));
+            
+            btn.classList.add('active');
+            const targetApp = btn.getAttribute('data-app');
+            document.getElementById(`app-${targetApp}`).classList.add('active');
+        });
+    });
+
     // Tab Navigation Logic
     const tabBtns = document.querySelectorAll('.tab-btn');
     const tabContents = document.querySelectorAll('.tab-content');
@@ -200,4 +215,122 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     btnRefreshHistory.addEventListener('click', loadHistory);
+
+    // --- Shopee Video Logic ---
+    const btnProcessVideo = document.getElementById('btn-process-video');
+    if (btnProcessVideo) {
+        btnProcessVideo.addEventListener('click', async () => {
+            const url = document.getElementById('video-url').value;
+            if (!url) {
+                showToast('Masukkan URL video terlebih dahulu!');
+                return;
+            }
+            
+            const originalText = btnProcessVideo.innerHTML;
+            btnProcessVideo.innerHTML = 'MEMPROSES...';
+            btnProcessVideo.disabled = true;
+            
+            try {
+                const res = await fetch('/api/extract', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url })
+                });
+                
+                const data = await res.json();
+                
+                if (data.error || data.success === false) {
+                    showToast(data.message || 'Gagal mengekstrak video');
+                    btnProcessVideo.innerHTML = originalText;
+                    btnProcessVideo.disabled = false;
+                    return;
+                }
+
+                // Parsing according to the API structure from main.py
+                const coverUrl = data.preview || 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=400&auto=format&fit=crop';
+                const username = data.username || 'nandaandhika9';
+                
+                let streams = data.streams_array || [];
+                
+                if (streams.length === 0) {
+                    showToast('Video stream tidak ditemukan');
+                    console.log('API Response:', data);
+                    btnProcessVideo.innerHTML = originalText;
+                    btnProcessVideo.disabled = false;
+                    return;
+                }
+
+                // Setup video player
+                const bestStream = streams.find(s => s.quality && s.quality.includes('720')) || streams[0];
+                const videoPlayer = document.getElementById('video-player');
+                videoPlayer.src = bestStream.stream_url;
+                videoPlayer.poster = coverUrl;
+                
+                // Update username
+                document.getElementById('video-username').textContent = username;
+                
+                // Render quality list
+                const qualityList = document.getElementById('quality-list-container');
+                qualityList.innerHTML = '';
+                
+                // Sort streams based on python logic
+                const qualityPriority = (q) => {
+                    const qUp = q.toUpperCase();
+                    if (qUp.includes('V720P') || qUp.includes('720P')) return 0;
+                    if (qUp.includes('V480P') || qUp.includes('480P')) return 1;
+                    if (qUp.includes('V360P') || qUp.includes('360P')) return 2;
+                    return 3;
+                };
+                streams.sort((a, b) => qualityPriority(a.quality || '') - qualityPriority(b.quality || ''));
+                
+                streams.forEach(stream => {
+                    const isBest = (stream.quality || '').toUpperCase().includes('720');
+                    const badgeClass = isBest ? 'quality-badge' : 'quality-badge standard';
+                    const icon = isBest ? '⭐ ' : '';
+                    
+                    const row = document.createElement('div');
+                    row.className = 'quality-row';
+                    row.innerHTML = `
+                        <div class="quality-badge-container">
+                            <span class="${badgeClass}">${icon}${stream.quality || 'Unknown'}</span>
+                        </div>
+                        <div class="quality-details">
+                            <span>Codec: ${stream.codec || 'MP4'}</span>
+                            <span>Durasi: ${stream.duration || 0}s</span>
+                        </div>
+                        <button class="btn-download-outline" data-url="${stream.stream_url}" data-quality="${stream.quality}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                                <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                            </svg>
+                            Unduh
+                        </button>
+                    `;
+                    qualityList.appendChild(row);
+                });
+                
+                // Add event listeners to download buttons
+                document.querySelectorAll('.btn-download-outline').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const url = e.currentTarget.getAttribute('data-url');
+                        const quality = e.currentTarget.getAttribute('data-quality');
+                        const filename = `${username}_${quality}.mp4`;
+                        window.location.href = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
+                    });
+                });
+
+                document.getElementById('video-preview-container').classList.remove('hidden');
+                
+                btnProcessVideo.innerHTML = originalText;
+                btnProcessVideo.disabled = false;
+                showToast('Video berhasil ditemukan!');
+            } catch (err) {
+                showToast('Terjadi kesalahan jaringan');
+                console.error(err);
+                btnProcessVideo.innerHTML = originalText;
+                btnProcessVideo.disabled = false;
+            }
+        });
+    }
+
 });
