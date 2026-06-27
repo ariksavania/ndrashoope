@@ -319,7 +319,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     });
                 });
 
-                document.getElementById('video-preview-container').classList.remove('hidden');
+                document.getElementById('video-result-panel').classList.remove('hidden');
                 
                 btnProcessVideo.innerHTML = originalText;
                 btnProcessVideo.disabled = false;
